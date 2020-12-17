@@ -98,9 +98,6 @@ async def Search(config, init):
     ]
     if not config.Popular_tweets:
         params.append(('f', 'tweets'))
-    if config.Lang:
-        params.append(("l", config.Lang))
-        params.append(("lang", "en"))
     if config.Query:
         q += f" from:{config.Query}"
     if config.Username:
@@ -108,10 +105,9 @@ async def Search(config, init):
     if config.Geo:
         config.Geo = config.Geo.replace(" ", "")
         q += f" geocode:{config.Geo}"
+    if conif.Lang:
+        q += f" lang:{config.Lang}"
     if config.Search:
-      if config.Lang:
-        q += f" {config.Search}  lang:{config.Lang}"
-      else:
         q += f" {config.Search}"
     if config.Year:
         q += f" until:{config.Year}-1-1"
