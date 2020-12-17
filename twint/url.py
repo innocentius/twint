@@ -111,7 +111,7 @@ async def Search(config, init):
     if config.Search:
       if config.Lang:
         q += f" {config.Search}  lang:{config.Lang}"
-      else
+      else:
         q += f" {config.Search}"
     if config.Year:
         q += f" until:{config.Year}-1-1"
