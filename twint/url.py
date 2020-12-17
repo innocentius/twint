@@ -105,7 +105,7 @@ async def Search(config, init):
     if config.Geo:
         config.Geo = config.Geo.replace(" ", "")
         q += f" geocode:{config.Geo}"
-    if conif.Lang:
+    if config.Lang:
         q += f" lang:{config.Lang}"
     if config.Search:
         q += f" {config.Search}"
