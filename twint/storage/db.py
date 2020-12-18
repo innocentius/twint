@@ -1,9 +1,14 @@
+import hashlib
+import json
+import logging
 import sqlite3
 import sys
 import time
-import hashlib
-
 from datetime import datetime
+
+
+LOGGER = logging.getLogger(__name__)
+
 
 def Conn(database):
     if database:
@@ -243,6 +248,10 @@ def tweets(conn, Tweet, config):
     try:
         time_ms = round(time.time()*1000)
         cursor = conn.cursor()
+        try:
+            mentions = ",".join(Tweet.mentions)
+        except TypeError as err:
+            mentions = json.dumps(Tweet.mentions)
         entry = (Tweet.id,
                     Tweet.id_str,
                     Tweet.tweet,
@@ -261,7 +270,7 @@ def tweets(conn, Tweet, config):
                     Tweet.username,
                     Tweet.name,
                     Tweet.link,
-                    ",".join(Tweet.mentions),
+                    mentions,
                     ",".join(Tweet.hashtags),
                     ",".join(Tweet.cashtags),
                     ",".join(Tweet.urls),
@@ -284,7 +293,18 @@ def tweets(conn, Tweet, config):
 
         if Tweet.retweet:
             query = 'INSERT INTO retweets VALUES(?,?,?,?,?)'
-            _d = datetime.timestamp(datetime.strptime(Tweet.retweet_date, "%Y-%m-%d %H:%M:%S"))
+
+            def get_datetime(inp):
+                return datetime.timestamp(datetime.strptime(inp, "%Y-%m-%d %H:%M:%S"))
+
+            try:
+                _d = get_datetime(Tweet.retweet_date)
+            except ValueError as err:
+                if Tweet.retweet_date.endswith(' WITA'):
+                    LOGGER.exception(err)
+                    _d = get_datetime(Tweet.retweet_date.rsplit(' WITA', 1)[0])
+                else:
+                    raise err
             cursor.execute(query, (int(Tweet.user_rt_id), Tweet.user_rt, Tweet.id, int(Tweet.retweet_id), _d))
 
         if Tweet.reply_to:
