@@ -310,6 +310,7 @@ def tweets(conn, Tweet, config):
         if Tweet.reply_to:
             for reply in Tweet.reply_to:
                 query = 'INSERT INTO replies VALUES(?,?,?)'
+                print(reply['user_id'], flush = true)
                 cursor.execute(query, (Tweet.id, int(reply['user_id']), reply['username']))
 
         conn.commit()
