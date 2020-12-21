@@ -287,7 +287,7 @@ def tweets(conn, Tweet, config):
                     Tweet.trans_src,
                     Tweet.trans_dest)
             cursor.execute('INSERT INTO tweets VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', entry)
-        except InterfaceError as err:
+        except sqlite3.InterfaceError as err:
             print("Interface Error when scraping %s" % str(Tweet.id))
 
         if config.Favorites:
