@@ -252,7 +252,8 @@ def tweets(conn, Tweet, config):
             mentions = ",".join(Tweet.mentions)
         except TypeError as err:
             mentions = json.dumps(Tweet.mentions)
-        entry = (Tweet.id,
+        try:
+            entry = (Tweet.id,
                     Tweet.id_str,
                     Tweet.tweet,
                     Tweet.lang,
@@ -285,7 +286,9 @@ def tweets(conn, Tweet, config):
                     Tweet.translate,
                     Tweet.trans_src,
                     Tweet.trans_dest)
-        cursor.execute('INSERT INTO tweets VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', entry)
+            cursor.execute('INSERT INTO tweets VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', entry)
+        except InterfaceError as err:
+            print("Interface Error when scraping %s" % str(Tweet.id))
 
         if config.Favorites:
             query = 'INSERT INTO favorites VALUES(?,?)'
