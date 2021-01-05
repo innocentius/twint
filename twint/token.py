@@ -93,6 +93,7 @@ class Token:
 
     def refresh(self):
         logme.debug('Retrieving guest token')
+        print('DEBUG: Guest Token Retrieve Begin')
         res = self._request()
         print('DEBUG: Guest Token Refreshed.')
         match = re.search(r'\("gt=(\d+);', res.text)
