@@ -70,8 +70,9 @@ class Token:
             try:
                 if(self.config.Proxy_host and self.config.Proxy_port):
                     prox = "http://" + self.config.Proxy_host + ":" + self.config.Proxy_port
+                    prox_full ={'http': prox}
                     logme.log(logme.WARNING, f'using proxy {prox}')
-                    r = self._session.send(req, allow_redirects=True, timeout=self._timeout, proxies = prox)
+                    r = self._session.send(req, allow_redirects=True, timeout=self._timeout, proxies = prox_full)
                 else:
                     r = self._session.send(req, allow_redirects=True, timeout=self._timeout)
             except requests.exceptions.RequestException as exc:
