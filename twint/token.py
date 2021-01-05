@@ -68,7 +68,7 @@ class Token:
         print('DEBUG: Guest Token Refreshed.')
         match = re.search(r'\("gt=(\d+);', res.text)
         if match:
-            logme.debug('Found guest token in HTML')
+            logme.log(logme.WARNING, f'Found guest token in HTML')
             self.config.Guest_token = str(match.group(1))
         else:
             self.config.Guest_token = None
