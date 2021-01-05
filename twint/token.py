@@ -56,7 +56,7 @@ class RefreshTokenException(Exception):
 class Token:
     def __init__(self, config):
         self._session = requests.Session()
-        self._session.headers.update({random.choice(user_agent_list)})
+        self._session.headers.update({'User-Agent': random.choice(user_agent_list)})
         self.config = config
         self._retries = 5
         self._timeout = 10
