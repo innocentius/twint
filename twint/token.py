@@ -52,14 +52,14 @@ class Token:
         self._timeout = 10
         self.url = 'https://twitter.com'
 
-    def _request(self):
+    def _request(self, proxy_host = None, proxy_port = None):
         for attempt in range(self._retries + 1):
             # The request is newly prepared on each retry because of potential cookie updates.
             req = self._session.prepare_request(requests.Request('GET', self.url))
             logme.debug(f'Retrieving {req.url}')
             try:
-                if(self.config.Proxy_host and self.config.Proxy_port):
-                    prox = "http://" + self.config.Proxy_host + ":" + self.config.Proxy_port
+                if(proxy_host and proxy_port):
+                    prox = "http://" + proxy_host + ":" + proxy_port
                     prox_full ={'http': prox}
                     logme.log(logme.WARNING, f'using proxy {prox}')
                     r = self._session.send(req, allow_redirects=True, timeout=self._timeout, proxies = prox_full)
@@ -94,7 +94,7 @@ class Token:
     def refresh(self):
         logme.debug('Retrieving guest token')
         print('DEBUG: Guest Token Retrieve Begin')
-        res = self._request()
+        res = self._request(proxy_host = self.config.Proxy_host, proxy_port = self.config.Proxy_port)
         print('DEBUG: Guest Token Refreshed.')
         match = re.search(r'\("gt=(\d+);', res.text)
         if match:
