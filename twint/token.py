@@ -99,10 +99,10 @@ class Token:
         print('DEBUG: Guest Token Refreshed.', flush = True)
         match = re.search(r'\("gt=(\d+);', res.text)
         if match:
-            print(res.raw.data)
+            print(res)
             logme.log(logme.WARNING, f'Found guest token in HTML')
             self.config.Guest_token = str(match.group(1))
         else:
             self.config.Guest_token = None
-            print(res.raw.data)
+            print(res)
             raise RefreshTokenException('Could not find the Guest token in HTML')
