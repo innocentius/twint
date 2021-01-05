@@ -33,6 +33,7 @@ class Twint:
         # TODO might have to make some adjustments for it to work with multi-treading
         # USAGE : to get a new guest token simply do `self.token.refresh()`
         self.token = token.Token(config)
+        print("run.py: Using Proxy:" + config.Proxy_host + ":" + config.Proxy_port)
         self.token.refresh()
         self.conn = db.Conn(config.Database)
         self.d = datelock.Set(self.config.Until, self.config.Since)
