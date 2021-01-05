@@ -30,7 +30,12 @@ class Token:
             req = self._session.prepare_request(requests.Request('GET', self.url))
             logme.debug(f'Retrieving {req.url}')
             try:
-                r = self._session.send(req, allow_redirects=True, timeout=self._timeout)
+                if(self.config.Proxy_host and self.config.Proxy_port):
+                    prox = "http://" + self.config.Proxy_host + ":" + self.config.Proxy_port
+                    logme.log(logme.WARNING, using proxy {prox})
+                    r = self._session.send(req, allow_redirects=True, timeout=self._timeout, proxies = prox)
+                else:
+                    r = self._session.send(req, allow_redirects=True, timeout=self._timeout)
             except requests.exceptions.RequestException as exc:
                 if attempt < self._retries:
                     retrying = ', retrying'
