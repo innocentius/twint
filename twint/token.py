@@ -118,7 +118,7 @@ class Token:
         print('DEBUG: Guest Token Retrieve Begin', flush = True)
         failure_count = 0
         res = None
-        while(true):
+        while(True):
             try:
                 res = asyncio.run(gettoken(self.url))
             except Exception as s:                
