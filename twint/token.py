@@ -63,7 +63,8 @@ class Token:
                     prox_full ={'http': prox}
                     logme.log(logme.WARNING, f'using proxy {prox}')
                     print("using proxy", flush = True)
-                    r = self._session.send(req, allow_redirects=True, timeout=self._timeout, proxies = prox_full)
+                    self._session.proxies.update(prox_full)
+                    r = self._session.send(req, allow_redirects=True, timeout=self._timeout)
                 else:
                     r = self._session.send(req, allow_redirects=True, timeout=self._timeout)
             except requests.exceptions.RequestException as exc:
