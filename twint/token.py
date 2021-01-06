@@ -112,7 +112,7 @@ class Token:
     def refresh(self):
         logme.debug('Retrieving guest token')
         print('DEBUG: Guest Token Retrieve Begin', flush = True)
-        res = Request(self.url, headers = {'User-Agent': random.choice(user_agent_list))
+        res = Request(self.url, headers = {'User-Agent': random.choice(user_agent_list)})
         print('DEBUG: Guest Token Refreshed.', flush = True)
         match = re.search(r'\("gt=(\d+);', res.text)
         if match:
