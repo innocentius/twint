@@ -2,7 +2,8 @@ import re
 import time
 import random
 import aiohttp
-
+import asyncio
+from async_timeout import timeout
 import requests
 import logging as logme
 
@@ -58,7 +59,10 @@ async def Response(session, _url, params=None):
             if response.status == 429:  # 429 implies Too many requests i.e. Rate Limit Exceeded
                 raise TokenExpiryException(loads(resp)['errors'][0]['message'])
             return resp
-        
+async def gettoken(__url):
+    logme.debug(__name__ + ':get_token_new')
+    a = await Request(__url, headers = {'User-Agent': random.choice(user_agent_list)})
+    return a
 class Token:
     def __init__(self, config):
         self._session = requests.Session()
@@ -112,7 +116,7 @@ class Token:
     def refresh(self):
         logme.debug('Retrieving guest token')
         print('DEBUG: Guest Token Retrieve Begin', flush = True)
-        res = Request(self.url, headers = {'User-Agent': random.choice(user_agent_list)})
+        res = asyncio.run(gettoken(self.url))
         print('DEBUG: Guest Token Refreshed.', flush = True)
         match = re.search(r'\("gt=(\d+);', res.text)
         if match:
