@@ -118,21 +118,33 @@ class Token:
         print('DEBUG: Guest Token Retrieve Begin', flush = True)
         failure_count = 0
         res = None
+        match = None
         while True:
             try:
                 res = asyncio.run(gettoken(self.url))
-                break
-            except Exception as s:                
+            except Exception as e:                
                 #When an exception happens, we check how many time it failed.
                 #If failed less than 10 times, we try get the token again.
                 failure_count += 1
                 if failure_count <= 10:
                     delay = round(failure_count * 2, 1)
                     # This is not due to twitter throttling, so no need to sleep for a extended amount of time.
-                    sys.stderr.write('sleeping for {} secs\n'.format(delay))
+                    sys.stderr.write('sleeping for {} secs due to token failure\n'.format(delay))
                     time.sleep(delay)
                     continue
                 logme.critical(__name__ + ':Twint:Token:Get_Token_Error_Too_Many_Trials' + string(e))
+                break
+            if not res:
+                failure_count += 1
+                if failure_count <= 10:
+                    delay = round(failure_count * 2, 1)
+                    # This is not due to twitter throttling, so no need to sleep for a extended amount of time.
+                    sys.stderr.write('sleeping for {} secs due to token failure\n'.format(delay))
+                    time.sleep(delay)
+                    continue
+                logme.critical(__name__ + ':Twint:Token:Get_Token_Error_Too_Many_Trials' + string(e))
+                break
+            else:
                 break
         print('DEBUG: Guest Token Refreshed.', flush = True)
         if res:
