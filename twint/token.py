@@ -116,9 +116,26 @@ class Token:
     def refresh(self):
         logme.debug('Retrieving guest token')
         print('DEBUG: Guest Token Retrieve Begin', flush = True)
-        res = asyncio.run(gettoken(self.url))
+        failure_count = 0
+        res = None
+        while(true):
+            try:
+                res = asyncio.run(gettoken(self.url))
+            except Exception as s:                
+                #When an exception happens, we check how many time it failed.
+                #If failed less than 10 times, we try get the token again.
+                failure_count += 1
+                if failure_count <= 10:
+                    delay = round(failure_count * 2, 1)
+                    # This is not due to twitter throttling, so no need to sleep for a extended amount of time.
+                    sys.stderr.write('sleeping for {} secs\n'.format(delay))
+                    time.sleep(delay)
+                    continue
+                logme.critical(__name__ + ':Twint:Token:Get_Token_Error_Too_Many_Trials' + string(e))
+                break
         print('DEBUG: Guest Token Refreshed.', flush = True)
-        match = re.search(r'\("gt=(\d+);', res)
+        if res:
+            match = re.search(r'\("gt=(\d+);', res)
         if match:
             logme.log(logme.WARNING, f'Found guest token in HTML')
             self.config.Guest_token = str(match.group(1))
