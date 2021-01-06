@@ -113,7 +113,7 @@ class Token:
             self.config.Guest_token = None
             raise RefreshTokenException(msg)
 
-    async def refresh(self):
+    def refresh(self):
         logme.debug('Retrieving guest token')
         print('DEBUG: Guest Token Retrieve Begin', flush = True)
         failure_count = 0
@@ -121,7 +121,7 @@ class Token:
         match = None
         while True:
             try:
-                res = await gettoken(self.url)
+                res = asyncio.run(gettoken(self.url))
             except Exception as e:                
                 #When an exception happens, we check how many time it failed.
                 #If failed less than 10 times, we try get the token again.
