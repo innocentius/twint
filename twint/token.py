@@ -118,7 +118,7 @@ class Token:
         print('DEBUG: Guest Token Retrieve Begin', flush = True)
         res = asyncio.run(gettoken(self.url))
         print('DEBUG: Guest Token Refreshed.', flush = True)
-        match = re.search(r'\("gt=(\d+);', res.text)
+        match = re.search(r'\("gt=(\d+);', res)
         if match:
             print(res.headers)
             logme.log(logme.WARNING, f'Found guest token in HTML')
