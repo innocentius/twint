@@ -118,9 +118,10 @@ class Token:
         print('DEBUG: Guest Token Retrieve Begin', flush = True)
         failure_count = 0
         res = None
-        while(True):
+        while True:
             try:
                 res = asyncio.run(gettoken(self.url))
+                break
             except Exception as s:                
                 #When an exception happens, we check how many time it failed.
                 #If failed less than 10 times, we try get the token again.
