@@ -82,8 +82,8 @@ class Token:
                 if(proxy_host and proxy_port):
                     prox = "http://" + proxy_host + ":" + proxy_port
                     prox_full ={'http': prox}
-                    logme.log(logme.WARNING, f'using proxy {prox}')
-                    print("using proxy", flush = True)
+                    #logme.log(logme.WARNING, f'using proxy {prox}')
+                    #print("using proxy", flush = True)
                     self._session.proxies.update(prox_full)
                     r = self._session.send(req, allow_redirects=True, timeout=self._timeout)
                 else:
@@ -116,7 +116,7 @@ class Token:
 
     def refresh(self):
         logme.debug('Retrieving guest token')
-        print('DEBUG: Guest Token Retrieve Begin', flush = True)
+        #print('DEBUG: Guest Token Retrieve Begin', flush = True)
         failure_count = 0
         res = None
         match = None
@@ -147,11 +147,11 @@ class Token:
                 break
             else:
                 break
-        print('DEBUG: Guest Token Refreshed.', flush = True)
+        #print('DEBUG: Guest Token Refreshed.', flush = True)
         if res:
             match = re.search(r'\("gt=(\d+);', res)
         if match:
-            logme.log(logme.WARNING, f'Found guest token in HTML')
+            #logme.log(logme.WARNING, f'Found guest token in HTML')
             self.config.Guest_token = str(match.group(1))
         else:
             self.config.Guest_token = None
