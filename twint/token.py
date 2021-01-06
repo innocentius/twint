@@ -1,6 +1,7 @@
 import re
 import time
 import random
+import aiohttp
 
 import requests
 import logging as logme
@@ -42,7 +43,22 @@ class RefreshTokenException(Exception):
     def __init__(self, msg):
         super().__init__(msg)
         
+async def Request(_url, connector=None, params=None, headers=None):
+    logme.debug(__name__ + ':Request:Connector')
+    async with aiohttp.ClientSession(connector=connector, headers=headers) as session:
+        return await Response(session, _url, params)
 
+
+async def Response(session, _url, params=None):
+    logme.debug(__name__ + ':Response')
+    httpproxy = "http://127.0.0.1:24000"
+    with timeout(120):
+        async with session.get(_url, ssl=True, params=params, proxy=httpproxy) as response:
+            resp = await response.text()
+            if response.status == 429:  # 429 implies Too many requests i.e. Rate Limit Exceeded
+                raise TokenExpiryException(loads(resp)['errors'][0]['message'])
+            return resp
+        
 class Token:
     def __init__(self, config):
         self._session = requests.Session()
@@ -96,7 +112,7 @@ class Token:
     def refresh(self):
         logme.debug('Retrieving guest token')
         print('DEBUG: Guest Token Retrieve Begin', flush = True)
-        res = self._request(proxy_host = self.config.Proxy_host, proxy_port = self.config.Proxy_port)
+        res = Request(self.url, headers = {'User-Agent': random.choice(user_agent_list))
         print('DEBUG: Guest Token Refreshed.', flush = True)
         match = re.search(r'\("gt=(\d+);', res.text)
         if match:
@@ -107,3 +123,4 @@ class Token:
             self.config.Guest_token = None
             print(res.headers)
             raise RefreshTokenException('Could not find the Guest token in HTML')
+            
